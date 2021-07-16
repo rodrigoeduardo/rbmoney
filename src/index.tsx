@@ -24,7 +24,7 @@ createServer({
           title: 'Novo equipamento',
           type: 'withdraw',
           category: 'Gear',
-          value: 6000,
+          value: 2200,
           createdAt: new Date('2021-02-22 12:00:00'),
         }
       ],

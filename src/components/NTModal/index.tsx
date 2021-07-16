@@ -2,13 +2,14 @@ import { FormEvent, useState } from "react";
 
 import Modal from "react-modal";
 
+import { useTransactions } from "../../hooks/useTransactions";
+
 import closeImg from "../../assets/close.svg";
 import incomeImg from "../../assets/income.svg";
 import outcomeImg from "../../assets/outcome.svg";
 
-import { api } from "../../services/api";
-
 import { Container, TransactionTypeContainer, RadioBox } from "./styles";
+
 
 interface NTModalProps {
   isOpen: boolean;
@@ -16,22 +17,29 @@ interface NTModalProps {
 }
 
 export function NtModal({ isOpen, onRequestClose }: NTModalProps) {
+  const { createTransaction } = useTransactions();
+
   const [title, setTitle] = useState("");
   const [value, setValue] = useState(0);
   const [category, setCategory] = useState("");
   const [type, setType] = useState("deposit");
 
-  function handleCreateNewTransaction(event: FormEvent) {
+  async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
-
-    const data = {
+    
+    await createTransaction({
       title,
-      value,
+      type,
       category,
-      type
-    }
+      value
+    });
 
-    api.post("/transactions", data);
+    setTitle("");
+    setValue(0);
+    setCategory("");
+    setType("deposit");
+
+    onRequestClose();
   }
 
   return (
@@ -71,6 +79,7 @@ export function NtModal({ isOpen, onRequestClose }: NTModalProps) {
               setType("deposit");
             }}
             isActive={type === "deposit"}
+            activeColor="green"
           >
             <img src={incomeImg} alt="Entrada" />
             <span>Entrada</span>
@@ -82,6 +91,7 @@ export function NtModal({ isOpen, onRequestClose }: NTModalProps) {
               setType("withdraw");
             }}
             isActive={type === "withdraw"}
+            activeColor="red"
           >
             <img src={outcomeImg} alt="Saída" />
             <span>Saída</span>
